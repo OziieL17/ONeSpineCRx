@@ -2,7 +2,7 @@
 import math
 from dataclasses import dataclass, field
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 VERTEBRAE = tuple('C%d' % i for i in range(2, 8))
 SEGMENTS = tuple(zip(VERTEBRAE[:-1], VERTEBRAE[1:])) + (('C7', 'T1'),)
 LABELS = ['ORIGIN', 'ANTERIOR_REF', 'CRANIAL_REF'] + [v + '_' + c for v in VERTEBRAE for c in ('SA', 'SP', 'IA', 'IP')] + ['T1_SA', 'T1_SP']
@@ -77,7 +77,7 @@ class GeometryModel:
                     a, p = (projection.points[k] for k in keys)
                     d = sub(a, p)
                     if d[0] <= 1e-8:
-                        self.qc.append({'level': v, 'code': 'AP_ORDER', 'message': 'Revisar anterior/posterior o platillo vertical'})
+                        self.qc.append({'level': v, 'endplate':end, 'code': 'AP_ORDER', 'message': 'Revisar anterior/posterior o platillo vertical', 'landmarks':keys, 'anterior':a, 'posterior':p})
                         continue
                     body[end] = {'anterior': a, 'posterior': p, 'midpoint': mean([a,p]), 'axis': unit(d), 'width': norm(d), 'angle_deg': angle(d)}
             if all(e in body for e in ('superior', 'inferior')):
@@ -152,7 +152,8 @@ def analyze(projection):
         key = cranial+'_'+caudal
         d = g.disc(cranial,caudal)
         if not d or d['status'] != 'ok':
-            reason = 'Landmarks faltantes' if not d else d['status']
+            rejected = [q['code'] for q in g.qc if q.get('level') in (cranial,caudal)]
+            reason = ('Landmarks rechazados por QC: '+', '.join(sorted(set(rejected))) if rejected else 'Landmarks faltantes') if not d else d['status']
             out['segments'][key] = {'status':'unavailable','reason':reason}
             if d: out['qc'].append({'level':key,'code':d['status'],'message':'Revisar soporte y platillos'})
             continue

@@ -14,6 +14,7 @@ set(MODULE_PYTHON_SCRIPTS
   ONeSpineCRxLib/__init__.py
   ONeSpineCRxLib/engine.py
   ONeSpineCRxLib/report.py
+  ONeSpineCRxLib/view.py
 )
 slicerMacroBuildScriptedModule(NAME ${PROJECT_NAME} SCRIPTS ${MODULE_PYTHON_SCRIPTS})
 include(${Slicer_EXTENSION_GENERATE_CONFIG})

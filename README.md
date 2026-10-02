@@ -1,6 +1,6 @@
 # ONeSpineCRx
 
-Módulo inicial para análisis **radiográfico cervical 2D** en 3D Slicer. Versión **0.1.0**, con motor independiente de Slicer y adquisición manual guiada de landmarks.
+Módulo inicial para análisis **radiográfico cervical 2D** en 3D Slicer. Versión **0.1.1**, con motor independiente de Slicer y adquisición manual guiada de landmarks.
 
 ## Estado real
 
@@ -21,7 +21,7 @@ El motor usa únicamente la biblioteca estándar de Python y es compatible con P
 ## Cinco pasos visibles
 
 1. **Cargar:** “Agregar DICOM” abre el módulo DICOM de Slicer; importar y cargar las radiografías con el flujo nativo.
-2. **Clasificar:** asignar manualmente volúmenes a LAT/FLEX/EXT. Cada volumen debe contener una sola imagen en el eje K. No asignar una TC/RM 3D.
+2. **Clasificar:** asignar manualmente volúmenes a LAT/FLEX/EXT. Cada volumen debe tener exactamente dos dimensiones mayores que 1; la tercera es un solo corte. Seleccione series diferentes para LAT/FLEX/EXT. No asignar una TC/RM 3D.
 3. **Orientar y calibrar:** seleccionar la proyección activa. Marcar `ORIGIN` dentro de la imagen; `ANTERIOR_REF` hacia anterior y `CRANIAL_REF` hacia craneal. La dirección ORIGIN→ANTERIOR_REF debe coincidir con la horizontal de adquisición para slopes y cSVA; confirmar la casilla solo después de verificarlo. Sin referencia horizontal fiable, conservar esos valores pendientes. Para mm, usar dos puntos de un marcador de longitud conocida o confirmar explícitamente una escala anatómica verificada del volumen.
 4. **Marcar anatomía:** avanzar con “Colocar siguiente punto”. Registrar cuatro esquinas de C2–C7; T1 superior es opcional. El módulo muestra la imagen y los puntos de la proyección activa. Editar/eliminar desde Markups. El origen y las referencias definen un plano común en RAS; puntos fuera del plano se rechazan.
 5. **Revisar:** resultados parciales se actualizan al editar puntos. FLEX/EXT se comparan automáticamente si ambas proyecciones tienen orientación válida. Exportar JSON y figuras SVG de geometría, sin radiografía de fondo.
@@ -78,3 +78,13 @@ Definiciones de parámetros cervicales consultadas en estudios originales:
 - [Magnetic resonance imaging: A possible alternative to a standing lateral radiograph…](https://pubmed.ncbi.nlm.nih.gov/28953681/): definiciones radiográficas y comparación por modalidad/postura.
 
 Las fórmulas de altura sobre soporte común y traslación aquí implementadas son **convenciones geométricas explícitas del software** y requieren validación específica. La consulta bibliográfica inicial no sustituye validación metrológica.
+
+## Corrección de vista y marcaje (v0.1.1)
+
+La vista Red usa explícitamente el plano de píxeles del volumen. Si aparece invertida, usar **Girar 180°** o **Invertir arriba/abajo**; también hay giro de 90° e inversión horizontal. La configuración se guarda por proyección y en el JSON. Solo cambia la vista: los landmarks existentes permanecen en coordenadas mundo.
+
+Los botones **Marcar LAT / Marcar FLEX / Marcar EXT** activan imagen y marcaje independiente. Avance automático configurable, **Saltar punto actual** y **Volver a puntos omitidos** permiten completar anatomía parcialmente. Se limita marcaje a la vista Red activa. Los selectores no autoasignan imágenes recién creadas y no permiten asignar una misma imagen a dos proyecciones.
+
+Cuando Slicer advierte `Reference image in series does not contain geometry information`, verificar visualmente orientación y calibrar con marcador conocido. No se puede inferir orientación ni escala anatómica de metadatos ausentes. `AP_ORDER` y `BODY_GEOMETRY` requieren revisar referencias y etiquetas; girar la vista no corrige landmarks mal etiquetados.
+
+Cambio de proyección conserva datos; cambio de imagen asignada invalida solo esa proyección. Interfaz pendiente de validación en Slicer real.

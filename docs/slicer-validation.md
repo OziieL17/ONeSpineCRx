@@ -16,3 +16,12 @@ Entorno objetivo: Slicer 5.2.2, macOS, Python 3.9. Ejecutar antes de interpretar
 12. Cerrar/reabrir módulo y probar cleanup de observers. No se promete persistencia al guardar MRB en esta versión.
 
 Registrar versión exacta de Slicer, resultados y errores; estas comprobaciones no están ejecutadas en el entorno de desarrollo inicial.
+
+## Regresión v0.1.1 — pendiente en Slicer
+
+- Girar/invertir radiografía sin geometría DICOM; puntos existentes deben permanecer sobre el mismo píxel.
+- Importar series con módulo abierto: no deben autoasignarse a múltiples proyecciones.
+- Asignar LAT/FLEX/EXT diferentes y activar sus botones: confirmar imagen, nodo y conservación de puntos.
+- Marcar dos puntos con avance automático y verificar etiquetas; detener o cambiar proyección cancela continuación pendiente.
+- Saltar punto y volver a omitidos.
+- Rechazar asignación duplicada sin eliminar landmarks anteriores.

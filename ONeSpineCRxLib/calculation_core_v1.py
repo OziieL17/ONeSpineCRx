@@ -84,7 +84,3 @@ def analyze(projections):
                 out["dynamic"][key]={"delta_deg":d,"excursion_deg":abs(d)}
     return out
 
-def project_regional(base,changes):
-    """Pure angle perturbation only. NOT a prediction of postoperative loads or motion."""
-    return {region: value+sum(delta for level,delta in changes.items()
-            if level in region.split("|")) for region,value in base.items()}
